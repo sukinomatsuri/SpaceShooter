@@ -12,7 +12,7 @@
 
         private void onDeveloperLinkAreaClick(object? sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("explorer.exe", "https://github.com/sukinomatsuri");
+            System.Diagnostics.Process.Start("explorer.exe", "https://github.com/sukinomatsuri/SpaceShooter");
         }
 
         private void AboutForm_Load(object sender, EventArgs e)

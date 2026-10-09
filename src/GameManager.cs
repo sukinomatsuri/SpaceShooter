@@ -1,4 +1,4 @@
-﻿using SpaceShooter.core;
+using SpaceShooter.core;
 using SpaceShooter.gui;
 using SpaceShooter.utils;
 using System.Diagnostics;
@@ -198,8 +198,37 @@ namespace SpaceShooter
             await gameForm.Grid.DestroySpaceship(true);
             gameForm.Grid.GameOverActions();
 
+            string playerName = promptForName();
             string gameDuration = StringUtils.FormatSecondsToHMS(TimeManager.ElapsedGameTime);
-            DatabaseManager.AddHighscoresEntry(gameState.Score, gameState.Wave, gameDuration);
+            DatabaseManager.AddHighscoresEntry(playerName, gameState.Score, gameState.Wave, gameDuration);
+        }
+
+        private static string promptForName()
+        {
+            Form prompt = new Form()
+            {
+                Width = 400,
+                Height = 180,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = "Game Over",
+                StartPosition = FormStartPosition.CenterScreen,
+                MinimizeBox = false,
+                MaximizeBox = false,
+                BackColor = Color.Black,
+                ForeColor = Color.White
+            };
+            Label textLabel = new Label() { Left = 50, Top = 20, Width = 300, Text = "Enter your name for the highscores:", Font = new Font("Segoe UI", 10F, FontStyle.Bold) };
+            TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 280, BackColor = Color.FromArgb(40, 40, 40), ForeColor = Color.White, BorderStyle = BorderStyle.FixedSingle };
+            Button confirmation = new Button() { Text = "Submit", Left = 140, Width = 100, Top = 90, DialogResult = DialogResult.OK, FlatStyle = FlatStyle.Flat, BackColor = Color.FromArgb(60, 255, 255, 255) };
+            confirmation.FlatAppearance.BorderSize = 0;
+            
+            prompt.Controls.Add(textBox);
+            prompt.Controls.Add(confirmation);
+            prompt.Controls.Add(textLabel);
+            prompt.AcceptButton = confirmation;
+            
+            prompt.ShowDialog();
+            return string.IsNullOrWhiteSpace(textBox.Text) ? "Unknown" : textBox.Text;
         }
 
         private static void gameFormLostFocusActions(object? sender, EventArgs e)

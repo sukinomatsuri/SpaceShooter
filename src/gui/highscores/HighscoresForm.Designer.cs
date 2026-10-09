@@ -1,10 +1,11 @@
-﻿namespace SpaceShooter.gui
+namespace SpaceShooter.gui
 {
     partial class HighscoresForm
     {
         private Label titleLabel;
         private DataGridView highscoresGrid;
         private DataGridViewTextBoxColumn rankColumn;
+        private DataGridViewTextBoxColumn nameColumn;
         private DataGridViewTextBoxColumn scoreColumn;
         private DataGridViewTextBoxColumn waveColumn;
         private DataGridViewTextBoxColumn durationColumn;
@@ -41,6 +42,7 @@
             titleLabel = new Label();
             highscoresGrid = new DataGridView();
             rankColumn = new DataGridViewTextBoxColumn();
+            nameColumn = new DataGridViewTextBoxColumn();
             scoreColumn = new DataGridViewTextBoxColumn();
             waveColumn = new DataGridViewTextBoxColumn();
             durationColumn = new DataGridViewTextBoxColumn();
@@ -77,7 +79,7 @@
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             highscoresGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             highscoresGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            highscoresGrid.Columns.AddRange(new DataGridViewColumn[] { rankColumn, scoreColumn, waveColumn, durationColumn });
+            highscoresGrid.Columns.AddRange(new DataGridViewColumn[] { rankColumn, nameColumn, scoreColumn, waveColumn, durationColumn });
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = Color.Black;
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
@@ -102,6 +104,13 @@
             rankColumn.MinimumWidth = 6;
             rankColumn.Name = "rankColumn";
             rankColumn.ReadOnly = true;
+            // 
+            // nameColumn
+            // 
+            nameColumn.HeaderText = "Name";
+            nameColumn.MinimumWidth = 6;
+            nameColumn.Name = "nameColumn";
+            nameColumn.ReadOnly = true;
             // 
             // scoreColumn
             // 

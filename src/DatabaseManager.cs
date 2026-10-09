@@ -1,4 +1,4 @@
-﻿using System.Data.SQLite;
+using System.Data.SQLite;
 using static SpaceShooter.utils.CustomExceptions;
 
 namespace SpaceShooter
@@ -7,13 +7,14 @@ namespace SpaceShooter
     {
         private const string connectionString = "Data source=SpaceShooter.db; Version=3";
 
-        public static void AddHighscoresEntry(int score, int wave, string gameDuration)
+        public static void AddHighscoresEntry(string playerName, int score, int wave, string gameDuration)
         {
             createGameTable();
-            string insertSQL = "Insert into Game(score, wave, gameDuration) values (@score, @wave, @gameDuration)";
+            string insertSQL = "Insert into Game(playerName, score, wave, gameDuration) values (@playerName, @score, @wave, @gameDuration)";
 
             using (SQLiteCommand command = new SQLiteCommand(insertSQL))
             {
+                command.Parameters.AddWithValue("playerName", string.IsNullOrWhiteSpace(playerName) ? "Unknown" : playerName);
                 command.Parameters.AddWithValue("score", score);
                 command.Parameters.AddWithValue("wave", wave);
                 command.Parameters.AddWithValue("gameDuration", gameDuration);
@@ -44,13 +45,13 @@ namespace SpaceShooter
             }
         }
 
-        public static List<(int, int, string)> GetTopHighscoresEntries(int count)
+        public static List<(string, int, int, string)> GetTopHighscoresEntries(int count)
         {
             createGameTable();
 
-            List<(int, int, string)> topEntries = new List<(int, int, string)>();
+            List<(string, int, int, string)> topEntries = new List<(string, int, int, string)>();
 
-            string selectSQL = "Select * from Game";
+            string selectSQL = "Select playerName, score, wave, gameDuration from Game";
 
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
@@ -61,14 +62,15 @@ namespace SpaceShooter
                     {
                         while (reader.Read())
                         {
-                            int score = reader.GetInt32(0);
-                            int wave = reader.GetInt32(1);
-                            string gameDuration = reader.GetString(2);
+                            string playerName = reader.IsDBNull(0) ? "Unknown" : reader.GetString(0);
+                            int score = reader.GetInt32(1);
+                            int wave = reader.GetInt32(2);
+                            string gameDuration = reader.GetString(3);
 
-                            topEntries.Add((score, wave, gameDuration));
-                            topEntries = topEntries.OrderByDescending(entry => entry.Item1)
-                                .ThenBy(entry => entry.Item2)
+                            topEntries.Add((playerName, score, wave, gameDuration));
+                            topEntries = topEntries.OrderByDescending(entry => entry.Item2)
                                 .ThenBy(entry => entry.Item3)
+                                .ThenBy(entry => entry.Item4)
                                 .ToList();
 
                             if (topEntries.Count == count + 1)
@@ -110,10 +112,17 @@ namespace SpaceShooter
 
         private static void createGameTable()
         {
-            const string createTable = "Create table if not exists Game(score integer, wave integer, gameDuration text)";
+            const string createTable = "Create table if not exists Game(playerName text, score integer, wave integer, gameDuration text)";
 
             using(SQLiteCommand command = new SQLiteCommand(createTable))
                 executeNonQuerySQLiteCommand(command);   
+            
+            try
+            {
+                using(SQLiteCommand command = new SQLiteCommand("ALTER TABLE Game ADD COLUMN playerName text DEFAULT 'Unknown'"))
+                    executeNonQuerySQLiteCommand(command);
+            }
+            catch {}
         }
 
         private static void createOptionTable()

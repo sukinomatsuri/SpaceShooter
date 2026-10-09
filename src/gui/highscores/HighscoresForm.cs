@@ -13,16 +13,16 @@ namespace SpaceShooter.gui
 
         public void InitializeRuntime()
         {
-            List<(int, int, string)> highscores = DatabaseManager.GetTopHighscoresEntries(topEntriesCount);
+            List<(string, int, int, string)> highscores = DatabaseManager.GetTopHighscoresEntries(topEntriesCount);
 
             while (highscores.Count < topEntriesCount)
-                highscores.Add((0, 0, "00:00:00"));
+                highscores.Add(("---", 0, 0, "00:00:00"));
 
             highscoresGrid.Rows.Clear();
             for (int i = 0; i < topEntriesCount; i++)
             {
                 var entry = highscores[i];
-                highscoresGrid.Rows.Add(i + 1, entry.Item1, entry.Item2, entry.Item3);
+                highscoresGrid.Rows.Add(i + 1, entry.Item1, entry.Item2, entry.Item3, entry.Item4);
             }
         }
     }
