@@ -4,6 +4,16 @@
     {
         private static readonly Random random = new Random(Environment.TickCount);
 
+        private const int baseLaserBlastsCount = 1;
+        private const int baseBossLaserBlastsCount = 2;
+        private const int baseBomberMissileCount = 20;
+        private const int baseBossMissileCount = 10;
+
+        private const int wavesPerExtraLaserBlast = 1;
+        private const int maxExtraLaserBlasts = 4;
+        private const int wavesPerExtraMissile = 1;
+        private const int maxExtraMissiles = 10;
+
         private EnemySpaceship enemy;
         private readonly HeroSpaceship hero;
         private readonly List<CollidableItem> activeCollidableItems;
@@ -35,17 +45,27 @@
 
             if (Wave % 6 == 0)
             {
-                enemy = new EnemyBossSpaceship(Grid, hero);
+                enemy = new EnemyBossSpaceship(
+                    Grid,
+                    hero,
+                    concurrentLaserBlastsCount: scaledLaserBlastsCount(baseBossLaserBlastsCount),
+                    missileCount: scaledMissileCount(baseBossMissileCount)
+                );
                 return;
             }
             
             int selectedIndex = Wave < 4 ? Wave - 1 : random.Next(0, 3);
+            int laserBlastsCount = scaledLaserBlastsCount(baseLaserBlastsCount);
             enemy = selectedIndex switch
             {
-                0 => new EnemyFighterSpaceship(Grid),
-                1 => new EnemyTeleporterSpaceship(Grid),
-                2 => new EnemyBomberSpaceship(Grid),
-                _ => new EnemyFighterSpaceship(Grid)
+                0 => new EnemyFighterSpaceship(Grid, concurrentLaserBlastsCount: laserBlastsCount),
+                1 => new EnemyTeleporterSpaceship(Grid, concurrentLaserBlastsCount: laserBlastsCount),
+                2 => new EnemyBomberSpaceship(
+                    Grid,
+                    concurrentLaserBlastsCount: laserBlastsCount,
+                    missileCount: scaledMissileCount(baseBomberMissileCount)
+                ),
+                _ => new EnemyFighterSpaceship(Grid, concurrentLaserBlastsCount: laserBlastsCount)
             };
         }
 
@@ -119,5 +139,11 @@
         }
         
         private Spaceship getSpaceship(bool isHero) => isHero ? hero : enemy;
+
+        private int scaledLaserBlastsCount(int baseCount)
+            => baseCount + Math.Min((Wave - 1) / wavesPerExtraLaserBlast, maxExtraLaserBlasts);
+
+        private int scaledMissileCount(int baseCount)
+            => baseCount + Math.Min((Wave - 1) / wavesPerExtraMissile, maxExtraMissiles);
     }
 }

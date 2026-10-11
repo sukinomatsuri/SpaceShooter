@@ -1,0 +1,21 @@
+
+# Visual Studio temporary files
+.vs/
+*.suo
+*.wsuo
+*.user
+
+# Build folders
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# Temporary files
+*.tmp
+*.log
+
+# Secrets
+.env
+.env.*
+auth.json
