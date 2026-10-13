@@ -11,7 +11,7 @@ namespace SpaceShooter.core
         public HealthKit(GameGrid grid, IGridItem source, int health = 100) : base(grid, source)
         {
             this.health = health;
-            Image = Resources.img_health_kit;
+            Image = (Image)Resources.img_health_crate.Clone();
         }
 
         protected override void checkTargetCollided()

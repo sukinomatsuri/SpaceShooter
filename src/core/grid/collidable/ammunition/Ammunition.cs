@@ -9,6 +9,14 @@ namespace SpaceShooter.core
 
         public Ammunition() { }
 
+        public override void Move()
+        {
+            base.Move();
+
+            if (IsActive && (isOutOfBoundsX() || isOutOfBoundsY()))
+                IsActive = false;
+        }
+
         protected override void checkTargetCollided()
         {
             if (Target == null)

@@ -4,10 +4,34 @@ namespace SpaceShooter.core
 {
     internal class HeroSpaceship : Spaceship, IControls
     {
+        public const int MaxConcurrentLaserBlastsCount = 5;
+
+        private static readonly Image[] bonusLaserImages =
+        {
+            resources.Resources.img_cyan_laser_blast,
+            resources.Resources.img_violet_laser_blast,
+            resources.Resources.img_gold_laser_blast
+        };
+
+        private static readonly Image[] ammoCrateImages =
+        {
+            resources.Resources.img_cyan_ammo_crate,
+            resources.Resources.img_violet_ammo_crate,
+            resources.Resources.img_gold_ammo_crate
+        };
+
+        private int ammoUpgradeCount;
+
         public bool GoUp { get; set; }
         public bool GoDown { get; set; }
         public bool GoLeft { get; set; }
         public bool GoRight { get; set; }
+
+        public Image NextAmmoCrateImage => ammoCrateImages[ammoUpgradeCount % ammoCrateImages.Length];
+
+        public Image CurrentLaserImage => ammoUpgradeCount == 0
+            ? resources.Resources.img_blue_laser_blast
+            : bonusLaserImages[(ammoUpgradeCount - 1) % bonusLaserImages.Length];
 
         public HeroSpaceship(
             GameGrid grid, 
@@ -23,6 +47,16 @@ namespace SpaceShooter.core
             initializeLocationY();
             ResetControls();
             Image = resources.Resources.img_hero_spaceship;
+        }
+
+        public bool IncreaseConcurrentLaserBlastsCount()
+        {
+            if (ConcurrentLaserBlastsCount >= MaxConcurrentLaserBlastsCount)
+                return false;
+
+            ConcurrentLaserBlastsCount++;
+            ammoUpgradeCount++;
+            return true;
         }
 
         public override void Move()
@@ -43,7 +77,7 @@ namespace SpaceShooter.core
             List<HeroLaserBlast> laserBlasts = new List<HeroLaserBlast>();
 
             for (int i = 0; i < ConcurrentLaserBlastsCount; i++)
-                laserBlasts.Add(new HeroLaserBlast(this, grid, i));
+                laserBlasts.Add(new HeroLaserBlast(this, grid, i, CurrentLaserImage));
             lastLaserFireTimestamp = TimeManager.ElapsedGameTime;
 
             AudioPlayer.Player.PlaySound(fireLaserSoundFx);

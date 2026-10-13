@@ -17,6 +17,7 @@
         private EnemySpaceship enemy;
         private readonly HeroSpaceship hero;
         private readonly List<CollidableItem> activeCollidableItems;
+        private double ammoDropElapsedTime;
 
         public GameGrid Grid { get; private init; }
         public int Score { get; private set; }
@@ -40,7 +41,7 @@
             if (enemy != null)
             {
                 Score += enemy.ScorePoints;
-                releasePowerUp();
+                releaseHealthKit();
             }
 
             if (Wave % 6 == 0)
@@ -95,6 +96,7 @@
 
         public void MoveGridItems()
         {
+            updateTimedAmmoDrop();
             hero.Move(); 
             enemy.Move();
             foreach (var item in activeCollidableItems)
@@ -126,16 +128,30 @@
                     activeCollidableItems.RemoveAt(i);
         }
 
-        private void releasePowerUp()
+        private void releaseHealthKit()
         {
-            if (random.Next(0, 3) != 0)
-                return;
-
             var healthKit = new HealthKit(Grid, enemy)
             {
                 Target = hero
             };
             activeCollidableItems.Add(healthKit);
+        }
+
+        private void updateTimedAmmoDrop()
+        {
+            const double ammoDropIntervalSeconds = 60;
+            ammoDropElapsedTime += TimeManager.DeltaTime;
+
+            if (ammoDropElapsedTime < ammoDropIntervalSeconds)
+                return;
+
+            ammoDropElapsedTime -= ammoDropIntervalSeconds;
+
+            var ammoCrate = new LaserPowerUp(Grid, enemy, hero)
+            {
+                Target = hero
+            };
+            activeCollidableItems.Add(ammoCrate);
         }
         
         private Spaceship getSpaceship(bool isHero) => isHero ? hero : enemy;
