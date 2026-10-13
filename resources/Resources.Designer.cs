@@ -170,6 +170,26 @@ namespace SpaceShooter.resources {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap img_cyan_ammo_crate {
+            get {
+                object obj = ResourceManager.GetObject("img_cyan_ammo_crate", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap img_cyan_laser_blast {
+            get {
+                object obj = ResourceManager.GetObject("img_cyan_laser_blast", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
@@ -250,6 +270,26 @@ namespace SpaceShooter.resources {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap img_gold_ammo_crate {
+            get {
+                object obj = ResourceManager.GetObject("img_gold_ammo_crate", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap img_gold_laser_blast {
+            get {
+                object obj = ResourceManager.GetObject("img_gold_laser_blast", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
@@ -257,6 +297,16 @@ namespace SpaceShooter.resources {
         internal static System.Drawing.Bitmap img_health_kit {
             get {
                 object obj = ResourceManager.GetObject("img_health_kit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap img_health_crate {
+            get {
+                object obj = ResourceManager.GetObject("img_health_crate", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -317,6 +367,26 @@ namespace SpaceShooter.resources {
         internal static System.Drawing.Bitmap img_space_background_v {
             get {
                 object obj = ResourceManager.GetObject("img_space_background_v", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap img_violet_ammo_crate {
+            get {
+                object obj = ResourceManager.GetObject("img_violet_ammo_crate", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap img_violet_laser_blast {
+            get {
+                object obj = ResourceManager.GetObject("img_violet_laser_blast", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

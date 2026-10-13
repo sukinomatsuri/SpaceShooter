@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SpaceShooter.utils;
 
 namespace SpaceShooter.core
 {
@@ -21,6 +22,7 @@ namespace SpaceShooter.core
         private EnemySpaceship? enemy;
         private readonly HeroSpaceship hero;
         private readonly List<CollidableItem> activeCollidableItems;
+        private double ammoDropElapsedTime;
 
         public GameGrid Grid { get; private init; }
         public int Score { get; private set; }
@@ -34,7 +36,7 @@ namespace SpaceShooter.core
             Score = 0;
             Wave = 0;
 
-            // THÊM DÒNG NÀY: Vừa mở game lên là thả ngay 1 đợt 6 món đầu tiên
+            // Vừa mở game lên là thả ngay 1 đợt 6 món đầu tiên
             SpawnPowerUpBatch();
         }
 
@@ -47,6 +49,7 @@ namespace SpaceShooter.core
             if (enemy != null)
             {
                 Score += enemy.ScorePoints;
+                releaseHealthKit();
             }
 
             if (Wave % 6 == 0)
@@ -100,18 +103,48 @@ namespace SpaceShooter.core
                     activeCollidableItems.RemoveAt(i);
         }
 
+        private void releaseHealthKit()
+        {
+            if (enemy == null) return;
+            var healthKit = new HealthKit(Grid, enemy)
+            {
+                Target = hero
+            };
+            activeCollidableItems.Add(healthKit);
+        }
+
+        private void updateTimedAmmoDrop()
+        {
+            const double ammoDropIntervalSeconds = 60;
+            ammoDropElapsedTime += TimeManager.DeltaTime;
+
+            if (ammoDropElapsedTime < ammoDropIntervalSeconds)
+                return;
+
+            ammoDropElapsedTime -= ammoDropIntervalSeconds;
+
+            if (enemy == null) return;
+
+            var ammoCrate = new LaserPowerUp(Grid, enemy, hero)
+            {
+                Target = hero
+            };
+            activeCollidableItems.Add(ammoCrate);
+        }
+
         private Spaceship getSpaceship(bool isHero) => isHero ? hero : (Spaceship)enemy!;
         private int scaledLaserBlastsCount(int baseCount) => baseCount + Math.Min((Wave - 1) / wavesPerExtraLaserBlast, maxExtraLaserBlasts);
         private int scaledMissileCount(int baseCount) => baseCount + Math.Min((Wave - 1) / wavesPerExtraMissile, maxExtraMissiles);
 
 
         // ========================================================
-        // TÍNH NĂNG MỚI: CHUYỂN ĐỘNG VÀ TỰ ĐỘNG THẢ ĐỒ (MƯA VẬT PHẨM)
+        // TÍNH NĂNG: CHUYỂN ĐỘNG VÀ TỰ ĐỘNG THẢ ĐỒ (MƯA VẬT PHẨM)
         // ========================================================
         private int forcedSpawnTimer = 0; // Bộ đếm độc lập không sợ bị kẹt
 
         public void MoveGridItems()
         {
+            updateTimedAmmoDrop();
             hero.Move();
             enemy?.Move();
             foreach (var item in activeCollidableItems)
@@ -124,28 +157,10 @@ namespace SpaceShooter.core
             // 2. CỨ SAU MỖI 450 KHUNG HÌNH (Khoảng thời gian vừa vặn để 6 món cũ trôi tuột xuống đáy màn hình) -> CƯỠNG CHẾ THẢ ĐỢT MỚI
             if (activeCollidableItems.Count == 0 || forcedSpawnTimer >= 450)
             {
-                List<string> itemTypes = new List<string> { "Health", "Health", "Health", "Nuke", "Nuke", "Nuke" };
-                itemTypes = itemTypes.OrderBy(x => random.Next()).ToList();
-
-                for (int i = 0; i < 6; i++)
-                {
-                    PowerUp newItem;
-                    if (itemTypes[i] == "Health")
-                    {
-                        newItem = new HealthKit(Grid, hero, columnIndex: i) { Target = hero };
-                    }
-                    else
-                    {
-                        newItem = new NukeBox(Grid, hero, columnIndex: i) { Target = hero };
-                    }
-
-                    activeCollidableItems.Add(newItem);
-                }
-
+                SpawnPowerUpBatch();
                 forcedSpawnTimer = 0; // Reset lại đồng hồ đếm
             }
         }
-        private int spawnTimer = 0;
 
         private void AutoSpawnPowerUps()
         {
