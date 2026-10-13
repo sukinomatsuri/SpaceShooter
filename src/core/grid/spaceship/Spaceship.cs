@@ -1,4 +1,4 @@
-﻿using SpaceShooter.resources;
+using SpaceShooter.resources;
 using SpaceShooter.utils;
 
 namespace SpaceShooter.core
