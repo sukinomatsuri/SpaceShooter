@@ -140,8 +140,6 @@ namespace SpaceShooter.core
         // ========================================================
         // TÍNH NĂNG: CHUYỂN ĐỘNG VÀ TỰ ĐỘNG THẢ ĐỒ (MƯA VẬT PHẨM)
         // ========================================================
-        private int forcedSpawnTimer = 0; // Bộ đếm độc lập không sợ bị kẹt
-
         public void MoveGridItems()
         {
             updateTimedAmmoDrop();
@@ -150,16 +148,8 @@ namespace SpaceShooter.core
             foreach (var item in activeCollidableItems)
                 item.Move();
 
-            // CỘNG DỒN BỘ ĐẾM MỖI KHUNG HÌNH
-            forcedSpawnTimer++;
-
-            // 1. NGAY KHI VỪA MỞ GAME (Lúc danh sách hoàn toàn trống rỗng = 0) -> THẢ NGAY LẬP TỨC ĐỢT ĐẦU
-            // 2. CỨ SAU MỖI 450 KHUNG HÌNH (Khoảng thời gian vừa vặn để 6 món cũ trôi tuột xuống đáy màn hình) -> CƯỠNG CHẾ THẢ ĐỢT MỚI
-            if (activeCollidableItems.Count == 0 || forcedSpawnTimer >= 450)
-            {
-                SpawnPowerUpBatch();
-                forcedSpawnTimer = 0; // Reset lại đồng hồ đếm
-            }
+            // Gọi hàm kiểm tra xem đã hết sạch vật phẩm chưa để thả đợt mới
+            AutoSpawnPowerUps();
         }
 
         private void AutoSpawnPowerUps()
@@ -168,10 +158,10 @@ namespace SpaceShooter.core
             int totalPowerUps = activeCollidableItems.OfType<HealthKit>().Count() +
                                 activeCollidableItems.OfType<NukeBox>().Count();
 
-            // Nếu toàn bộ 6 món của đợt trước đã trôi qua hoặc bị ăn hết (bằng 0)
+            // CHỈ KHI NÀO toàn bộ 6 món của đợt trước đã trôi qua hoặc bị ăn hết (bằng 0) thì mới thả
             if (totalPowerUps == 0)
             {
-                SpawnPowerUpBatch(); // Lập tức thả đợt 6 món mới
+                SpawnPowerUpBatch();
             }
         }
 
