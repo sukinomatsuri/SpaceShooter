@@ -8,17 +8,15 @@ namespace SpaceShooter.core
     {
         protected static readonly CachedSound healthBoostSoundFx = new(Resources.aud_health_boost);
         protected readonly int health;
-        private int slowCounter = 0;
         private static readonly Random random = new Random();
+        private readonly int despawnY; // Đổi tên để không trùng với lớp cha
 
-        // Thêm tham số columnIndex để thả theo cột không bị đè lên nhau
         public HealthKit(GameGrid grid, IGridItem source, int columnIndex = 0, int health = 100) : base(grid, source)
         {
             this.health = health;
             Image = Resources.img_health_kit;
             absMaxDisplacement = 1;
 
-            // Tự tính tọa độ X dựa theo cột
             int minX = grid.GetItemMinPossibleX();
             int maxX = grid.GetItemMaxPossibleX(this);
             int columnWidth = (maxX - minX) / 6;
@@ -29,15 +27,17 @@ namespace SpaceShooter.core
 
             LocationX = random.Next(colMin, Math.Min(colMax, maxX));
             LocationY = grid.GetItemMinPossibleY() - random.Next(0, 50);
+
+            despawnY = grid.GetItemMaxPossibleY(this) + 100;
         }
 
         public override void Move()
         {
-            slowCounter++;
-            if (slowCounter >= 3)
+            base.Move();
+
+            if (LocationY > despawnY)
             {
-                base.Move();
-                slowCounter = 0;
+                IsActive = false;
             }
         }
 

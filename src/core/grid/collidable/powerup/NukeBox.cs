@@ -7,38 +7,42 @@ namespace SpaceShooter.core
     public class NukeBox : PowerUp
     {
         protected static readonly CachedSound nukeSoundFx = new(Resources.aud_boom);
-        private int slowCounter = 0;
         private static readonly Random random = new Random();
+        private readonly int despawnY; // Đổi tên để không trùng với lớp cha
 
-        // Thêm tham số columnIndex tương tự hộp máu
         public NukeBox(GameGrid grid, IGridItem source, int columnIndex = 0) : base(grid, source)
         {
             Image = Resources.img_nuke;
-            defaultWidthRatio *= 2;
-            defaultHeightRatio *= 2;
+
+            // THÊM CHỮ 'f' ĐỂ KHÔNG BỊ LỖI ÉP KIỂU DOUBLE SANG FLOAT
+            defaultWidthRatio *= 1.5f;
+            defaultHeightRatio *= 2f;
             setSize(grid);
             absMaxDisplacement = 1;
 
-            // Tự tính tọa độ X dựa theo cột
             int minX = grid.GetItemMinPossibleX();
             int maxX = grid.GetItemMaxPossibleX(this);
+
             int columnWidth = (maxX - minX) / 6;
 
-            int colMin = minX + (columnIndex * columnWidth);
-            int colMax = colMin + columnWidth - 10;
-            if (colMax <= colMin) colMax = colMin + 10;
+            int colMin = minX + (columnIndex * columnWidth) + 10;
+            int colMax = colMin + columnWidth - 30;
+
+            if (colMax <= colMin) colMax = colMin + 1;
 
             LocationX = random.Next(colMin, Math.Min(colMax, maxX));
             LocationY = grid.GetItemMinPossibleY() - random.Next(0, 50);
+
+            despawnY = grid.GetItemMaxPossibleY(this) + 100;
         }
 
         public override void Move()
         {
-            slowCounter++;
-            if (slowCounter >= 3)
+            base.Move();
+
+            if (LocationY > despawnY)
             {
-                base.Move();
-                slowCounter = 0;
+                IsActive = false;
             }
         }
 
